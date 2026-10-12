@@ -1,6 +1,6 @@
 import type { Candidat } from "../types/candidats";
 
-const API_URL = "http://localhost:3000";
+const API_URL = import.meta.env.VITE_API_URL;
 
 export async function envoyerCandidature(candidat: Candidat) {
   const response = await fetch(`${API_URL}/candidats`, {

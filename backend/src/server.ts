@@ -12,7 +12,13 @@ import db from "./database/database";
 
 const app = express();
 const PORT = Number(process.env.PORT) || 3000;
-app.use(cors());
+const allowedOrigins = [
+  "https://skullvi-candidat.vercel.app",
+  "https://challenge-skulliv.vercel.app",
+  "http://localhost:5173",
+  "http://localhost:5174",
+];
+app.use(cors({ origin: allowedOrigins }));
 app.use(express.json());
 
 app.get("/", (req, res) => {

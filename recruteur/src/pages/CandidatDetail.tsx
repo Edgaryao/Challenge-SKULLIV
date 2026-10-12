@@ -40,8 +40,6 @@ type CandidatDetailType = {
   created_at: string;
 };
 
-const API_URL = "http://localhost:3000";
-
 function CandidatDetail() {
   const { id } = useParams();
 
@@ -55,7 +53,9 @@ function CandidatDetail() {
   useEffect(() => {
     const chargerCandidat = async () => {
       try {
-        const response = await requeteApi(`${API_URL}/candidats/${id}`);
+        const response = await requeteApi(
+          `${import.meta.env.VITE_API_URL}/candidats/${id}`,
+        );
 
         if (!response.ok) {
           throw new Error("Impossible de récupérer le candidat.");
