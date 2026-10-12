@@ -35,3 +35,10 @@ dist-ssr
 .env
 .env.*
 !.env.example
+
+# dependances et fichiers generes
+node_modules/
+backend/dist/
+
+# anciennes bases sqlite
+backend/*.db
