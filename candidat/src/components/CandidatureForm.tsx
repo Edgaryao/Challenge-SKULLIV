@@ -1,5 +1,5 @@
 import { COMPETENCES_WEB } from "../types/competence";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import type { Candidat } from "../types/candidats";
 import { envoyerCandidature as envoyerCandidatureAPI } from "../services/candidats.services";
 import Modal from "./Modal";
@@ -25,6 +25,9 @@ function RequiredLabel({
 }
 
 function CandidatureForm() {
+  const soumissionEnCours = useRef(false);
+  const [envoiEnCours, setEnvoiEnCours] = useState(false);
+
   // usetate qui gère le modal
   const [modal, setModal] = useState({
     ouvert: false,
@@ -68,6 +71,10 @@ function CandidatureForm() {
   //   fonction de soummission du formulaire
   const envoyerCandidature = async (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    if (soumissionEnCours.current) {
+      return;
+    }
 
     if (!candidat.nom.trim()) {
       afficherErreur("Nom requis. Veuillez renseigner votre nom complet.");
@@ -186,9 +193,9 @@ function CandidatureForm() {
     }
 
     try {
-      const resultat = await envoyerCandidatureAPI(candidat);
-
-      console.log("Candidature enregistrée :", resultat);
+      soumissionEnCours.current = true;
+      setEnvoiEnCours(true);
+      await envoyerCandidatureAPI(candidat);
 
       setModal({
         ouvert: true,
@@ -223,6 +230,9 @@ function CandidatureForm() {
             ? error.message
             : "Impossible d'envoyer la candidature. Veuillez ressayer à nouveau",
       });
+    } finally {
+      soumissionEnCours.current = false;
+      setEnvoiEnCours(false);
     }
   };
   return (
@@ -622,9 +632,11 @@ function CandidatureForm() {
         <div className="pt-4 pb-10">
           <button
             type="submit"
-            className="bg-blue-600 text-white font-semibold px-8 py-3 rounded-lg hover:bg-blue-700 transition"
+            disabled={envoiEnCours}
+            aria-busy={envoiEnCours}
+            className="bg-blue-600 text-white font-semibold px-8 py-3 rounded-lg hover:bg-blue-700 transition disabled:cursor-not-allowed disabled:opacity-60"
           >
-            Envoyer ma candidature
+            {envoiEnCours ? "Envoi en cours..." : "Envoyer ma candidature"}
           </button>
         </div>
       </form>
